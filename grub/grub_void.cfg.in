@@ -1,5 +1,5 @@
 
-set pager="1"
+set pager="0"
 set locale_dir="(${voidlive})/boot/grub/locale"
 
 if [ -e "${prefix}/${grub_cpu}-${grub_platform}/all_video.mod" ]; then
@@ -16,12 +16,9 @@ insmod font
 if loadfont "(${voidlive})/boot/grub/fonts/unicode.pf2" ; then
     insmod gfxterm
     set gfxmode="auto"
-    
+
     terminal_input console
     terminal_output gfxterm
-    
-    insmod png
-    background_image "(${voidlive})/boot/isolinux/@@SPLASHIMAGE@@"
 fi
 
 if [ cpuid -l ]; then

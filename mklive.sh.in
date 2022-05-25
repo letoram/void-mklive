@@ -66,10 +66,11 @@ usage() {
 Usage: $PROGNAME [options]
 
 Options:
+ -A <arcan-appl>    Set arcan appl
  -a <xbps-arch>     Set XBPS_ARCH (do not use it unless you know what it is)
  -b <system-pkg>    Set an alternative base-system package (defaults to base-system).
  -r <repo-url>      Use this XBPS repository (may be specified multiple times).
- -c <cachedir>      Use this XBPS cache directory (a subdirectory of current 
+ -c <cachedir>      Use this XBPS cache directory (a subdirectory of current
 directory if unset).
  -k <keymap>        Default keymap to use (us if unset)
  -l <locale>        Default locale to use (en_US.UTF-8 if unset).
@@ -282,7 +283,7 @@ generate_iso_image() {
 #
 # main()
 #
-while getopts "a:b:r:c:C:T:Kk:l:i:I:s:o:p:v:h" opt; do
+while getopts "a:b:r:c:C:T:Kk:l:i:I:s:o:p:v:A:h" opt; do
     case $opt in
         a) BASE_ARCH="$OPTARG";;
         b) BASE_SYSTEM_PKG="$OPTARG";;
@@ -291,6 +292,7 @@ while getopts "a:b:r:c:C:T:Kk:l:i:I:s:o:p:v:h" opt; do
         K) readonly KEEP_BUILDDIR=1;;
         k) KEYMAP="$OPTARG";;
         l) LOCALE="$OPTARG";;
+        A) ARCAN_DEFAULTAPPL="$OPTARG";;
         i) INITRAMFS_COMPRESSION="$OPTARG";;
         I) INCLUDE_DIRECTORY="$OPTARG";;
         s) SQUASHFS_COMPRESSION="$OPTARG";;
@@ -395,6 +397,11 @@ mkdir -p "$ROOTFS"/etc
 
 print_step "Installing void pkgs into the rootfs: ${PACKAGE_LIST} ..."
 install_packages
+
+if [ -n "${ARCAN_DEFAULTAPPL}" ];then
+    print_step "Injecting Arcan support for $ARCAN_DEFAULTAPPL"
+    install_arcan
+fi
 
 if [ -n "${INCLUDE_DIRECTORY}" ];then
     print_step "Copying directory structure into the rootfs: ${INCLUDE_DIRECTORY} ..."
